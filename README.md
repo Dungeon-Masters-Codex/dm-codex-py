@@ -8,6 +8,8 @@ Python Backend API for the Dungeon Master's Codex App
 * DM can CRUD sessions if they have a campaign to assign them too
 * Endpoints were developed with TDD (100% coverage is MVP)
 
+## Built on
+
 ## Development: Getting Started
 > Project requires Python 3.8+ and Poetry
 > For detailed installation please visit the [Poetry Documentation](https://python-poetry.org/docs/)
@@ -15,4 +17,5 @@ Python Backend API for the Dungeon Master's Codex App
 * Add `.env` file (take a look  at `.env.example`)
 
 TODO: Make this more collaborative without a local postgres need. <- past MVP
+Hooray containers!
 

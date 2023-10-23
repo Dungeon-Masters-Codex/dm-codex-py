@@ -13,4 +13,8 @@ class User(db.Model):
     created_date = db.Column(db.DateTime, nullable=False)
     is_admin = db.Column(db.Boolean, nullable=False, default=False)
 
-    # TODO: set init constructor class, feels a little off to do so
+    def __init__(self, email, password, is_admin=False):
+        self.email = email
+        self.password = bcrypt.generate_password_hash(password)
+        self.created_on = datetime.now()
+        self.is_admin = is_admin
