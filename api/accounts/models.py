@@ -1,23 +1,30 @@
 from datetime import datetime
 
-from flask_login import UserMixin
+from bcrypt import hashpw
+from sqlalchemy import Boolean, Column, Integer, String, DateTime
+from database import Base
 
-from api import bcrypt, db
+class Questions(Base):
 
-class User(UserMixin, db.Model):
+    __tablename__ = 'questions'
+
+    id = Column(Integer, primary_key=True, index=True)
+
+
+class User(Base):
 
     __tablename__ = "users"
 
-    id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String, unique=True, nullable=False)
-    password = db.Column(db.String, nullable=False)
-    display_name = db.Column(db.String, nullable=False, default="Tav")
-    created_date = db.Column(db.DateTime, nullable=False)
-    is_admin = db.Column(db.Boolean, nullable=False, default=False)
+    id = Column(Integer, primary_key=True, index =True)
+    email = Column(String, unique=True, nullable=False)
+    password = Column(String, nullable=False)
+    display_name = Column(String, nullable=False, default="Tav")
+    created_date = Column(DateTime, nullable=False)
+    is_admin = Column(Boolean, nullable=False, default=False)
 
     def __init__(self, email, password, display_name, is_admin=False):
         self.email = email
-        self.password = bcrypt.generate_password_hash(password)
+        self.password = hashpw(password)
         self.display_name = display_name
         self.created_on = datetime.now()
         self.is_admin = is_admin
