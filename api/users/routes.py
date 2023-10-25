@@ -1,17 +1,18 @@
-from flask import Blueprint
-from flask_login import current_user, login_user
+from typing import List
 
-accounts_bp = Blueprint("accounts", __name__)
+from fastapi import APIRouter, Depends
+from pydantic import BaseModel
 
-@accounts_bp.route("/register", methods=["GET", "POST"])
-def register():
-    if current_user.is_authenticated:
-        return "Update me this isn't what I would return to the FE"
+class UserSchema(BaseModel):
+    email: str
+    password: str
+    display_name: str
 
-@accounts_bp.route("/login")
-def login():
-    pass
 
-@accounts_bp.route("/logout")
-def logout():
-    pass
+user = APIRouter(
+    prefix="/users"
+)
+
+@user.get("/health")
+def check_health() -> str:
+    return "ok"
