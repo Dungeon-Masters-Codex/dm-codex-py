@@ -1,34 +1,38 @@
-from database import db
-from fastapi import FastAPI
-from config import config
-import uvicorn
 import logging
+from contextlib import asynccontextmanager
+
+from fastapi import FastAPI
+import uvicorn
+
+from database import db
+from config import config
+
 
 
 logger = logging.getLogger(__name__)
 
 API_PREFIX = "/api/v1"
 
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+
+    db.connect(config.DB_CONFIG)
+    yield
+
+    await db.disconnect()
+
 
 def init_app():
     app = FastAPI(
-        title="Users App",
-        description="Handling Our User",
+        title="DMs Codex",
+        description="Handling Our Stuff",
         version="1",
+        lifespan=lifespan
     )
-
-    # TODO: this is deprecated, update me
-    @app.on_event("startup")
-    def startup():
-        db.connect(config.DB_CONFIG)
-
-    @app.on_event("shutdown")
-    async def shutdown():
-        await db.disconnect()
 
     # TODO: see if theres a cleaner file structure that I can pull all of these from one place
     # maybe like api/__init__.py or routers.py and all the users, sessions, etc folders under the api dir
-    from users.views import user_api
+    from api.users.views import user_api
 
     app.include_router(
         user_api,
