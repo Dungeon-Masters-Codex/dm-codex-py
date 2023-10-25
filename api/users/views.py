@@ -3,7 +3,7 @@ from typing import List
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 
-from users.models import User
+from .models import User
 from database import db
 
 
@@ -29,6 +29,9 @@ user_api = APIRouter(
     prefix="/users",
 )
 
+@user_api.get("/health")
+async def get_health():
+    return "ok"
 
 @user_api.post("/")
 async def create_user(
