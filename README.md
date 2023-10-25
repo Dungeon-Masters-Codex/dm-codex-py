@@ -9,13 +9,14 @@ Python Backend API for the Dungeon Master's Codex App
 * Endpoints were developed with TDD (100% coverage is MVP)
 
 ## Built on
+* fastapi
+* docker
 
 ## Development: Getting Started
 > Project requires Python 3.8+ and Poetry
 > For detailed installation please visit the [Poetry Documentation](https://python-poetry.org/docs/)
 
 * Add `.env` file (take a look  at `.env.example`)
+* install docker https://docs.docker.com/engine/install/
 
-TODO: Make this more collaborative without a local postgres need. <- past MVP
-Hooray containers!
 

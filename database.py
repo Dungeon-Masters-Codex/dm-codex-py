@@ -1,16 +1,34 @@
-# TODO: I don't want myself or anyone to have to deal with pgadmin, container anyone?
+import logging
 
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
+from sqlalchemy.orm import declarative_base
 
-# TODO: find a simple cloud postgress to get serve as the db and get the url from that
-# I botched the local setup in frustration to get this off the ground and have spent far too much time on it
+from config import configuration
 
-DATABASE_URL = 'fixmewithcloudurl'
-
-engine = create_engine(DATABASE_URL)
-
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+logger = logging.getLogger(__name__)
 
 Base = declarative_base()
+
+class Database:
+    def __init__(self):
+        self.__session = None
+        self.__engine = None
+
+    def connect(self, db_config):
+        self.__engine = create_async_engine(
+            configuration.DB_CONFIG
+        )
+
+        self.__session = async_sessionmaker(
+            bind=self.__engine,
+            autocommit=False,
+        )
+
+    async def disconnect(self):
+        await self.__engine.dispose()
+
+    async def get_db(self):
+        async with self.__session() as session:
+            yield session
+
+db = Database()

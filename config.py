@@ -2,40 +2,15 @@
 
 from decouple import config
 
-DATABASE_URI = config("DATABASE_URL")
-if DATABASE_URI.startswith("postgres://"):
-    DATABASE_URI = DATABASE_URI.replace("postgres://", "postgresql://", 1)
+# TODO if this doesnt mesh switch to import os and os.getenv
 
-
-class Config(object):
-    """The base configuratio"""
-    DEBUG = False
-    TESTING = False
-    CSRF_ENABLED = True
-    SECRET_KEY = config("SECRET_KEY", default="guess-me")
-    SQLALCHEMY_DATABASE_URI = DATABASE_URI
-    SQLALCHEMY_TRACK_MODIFICATIONS = False
+class Config:
+    DB_USER = config("DB_USER", "postgres")
+    DB_PASSWORD = config("DB_PASSWORD", "postgres")
+    DB_HOST = config("DB_HOST", "localhost:5555")
+    DB_NAME = config("DB_NAME", "postgres")
+    DB_CONFIG = f"postgresql+asyncpg://{DB_USER}:{DB_PASSWORD}@{DB_HOST}/{DB_NAME}"
     BCRYPT_LOG_ROUNDS = 13
-    WTF_CSRF_ENABLED = True
-    DEBUG_TB_ENABLED = False
-    DEBUG_TB_INTERCEPT_REDIRECTS = False
 
 
-class DevelopmentConfig(Config):
-    DEVELOPMENT = True
-    DEBUG = True
-    WTF_CSRF_ENABLED = False
-    DEBUG_TB_ENABLED = True
-
-
-class TestingConfig(Config):
-    TESTING = True
-    DEBUG = True
-    SQLALCHEMY_DATABASE_URI = DATABASE_URI
-    BCRYPT_LOG_ROUNDS = 1
-    WTF_CSRF_ENABLED = False
-
-
-class ProductionConfig(Config):
-    DEBUG = False
-    DEBUG_TB_ENABLED = False
+configuration = Config
