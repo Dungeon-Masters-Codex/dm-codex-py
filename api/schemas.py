@@ -6,9 +6,9 @@ class CampaignBase(BaseModel):
     description: str
 
 class CampaignCreate(CampaignBase):
-    pass
+    created_date: datetime = datetime.now()
 
-class Campaign(CampaignBase):
+class CampaignSchema(CampaignBase):
     id: int
     user_id: str
 
@@ -22,9 +22,10 @@ class UserBase(BaseModel):
 class UserCreate(UserBase):
     password: str
 
-class User(UserBase):
+class UserSchema(UserBase):
     id: int
-    campaigns: list[Campaign] = []
+    created_date: datetime = datetime.now()
+    campaigns: list[CampaignSchema] = []
 
     class Config:
         orm_mode = True

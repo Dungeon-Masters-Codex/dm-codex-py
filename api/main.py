@@ -1,4 +1,7 @@
 from fastapi import FastAPI
+
+from .models import Base
+from .database import SessionLocal, engine
 from users.routes import user
 
 API_PREFIX = "/api/v1"
