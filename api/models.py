@@ -7,10 +7,10 @@ class User(Base):
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, index=True)
-    email = Column(String, unique=True, nullable=False, index=True)
+    email = Column(String, unique=True, nullable=False)
     password = Column(String, nullable=False)
-    display_name = Column(String, nullable=False, default="Tav")
-    created_date = Column(DateTime, nullable=False)
+    display_name = Column(String(25), nullable=False, default="Tav")
+    created_date = Column(DateTime)
 
     # NOTE: keeping this here in the event I need it later but that is in doubt
     # def __init__(self, email, password, display_name, is_admin=False):
@@ -29,7 +29,7 @@ class Campaign(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, nullable=False)
     description = Column(Text(250))
-    created_date = Column(DateTime, nullable=False)
+    created_date = Column(DateTime)
     user_id = Column(Integer, ForeignKey("users.id"))
 
     user = relationship("User", back_populates="campaigns")
