@@ -14,6 +14,8 @@ Python Backend API for the Dungeon Master's Codex App
 > Project requires Python 3.8+ and Poetry
 > For detailed installation please visit the [Poetry Documentation](https://python-poetry.org/docs/)
 
+* Install Docker Desktop
+* activate then environment `poetry shell`
 * Add `.env` file (take a look  at `.env.example`)
 
 TODO: Make this more collaborative without a local postgres need. <- past MVP

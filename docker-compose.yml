@@ -1,0 +1,15 @@
+version: '3.9'
+
+services:
+  db:
+    container_name: dmc-postgres
+    image: postgres
+    restart: always
+    ports:
+      - 5432:5432
+    volumes:
+      - ~/apps/postgres:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: pass123
+      POSTGRES_DB: dmc_db
