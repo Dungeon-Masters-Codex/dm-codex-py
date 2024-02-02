@@ -1,6 +1,7 @@
 from typing import Any, Annotated
 
 from fastapi import APIRouter, Depends, HTTPException
+from fastapi.security import OAuth2PasswordRequestForm
 from pydantic import BaseModel, Field
 
 from auth.oauth import oauth2_scheme
@@ -27,6 +28,15 @@ class UserInput(User):
 @user.get("/health")
 def check_health() -> str:
     return "ok"
+
+@user.get("/token")
+async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]):
+    # get username from form_data => form_data.username
+    # if not user dict, raise 400
+    # get hashed password
+    # if not password raise 400
+    # return access token (username) and token type (string bearer) 
+    pass
 
 @user.post("/",  response_model=User, response_description="The created user.",  tags=["Users"])
 def create_user(user: UserInput, token: Annotated[str, Depends(oauth2_scheme)],) -> Any: # TODO: def don't return the password

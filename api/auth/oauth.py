@@ -7,6 +7,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 auth = APIRouter(prefix="/auth")
 
+# NOTE: going to build this in /user/routes and it may stay living there
 @auth.post("/token")
 async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]):
     # get username from form_data => form_data.username
