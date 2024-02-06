@@ -1,55 +1,40 @@
 from typing import Any, Annotated
 
 from fastapi import APIRouter, Depends, HTTPException
-from fastapi.security import OAuth2PasswordRequestForm
-from pydantic import BaseModel, Field
 
 from auth.oauth import oauth2_scheme
+from .auth import get_current_user
+from .models import Token, User, UserInput
 
 user = APIRouter(
     prefix="/users"
 )
 
-class User(BaseModel):
-    # TODO: when more relevant expand to using Field for email/password
-    email: str # TODO: install python-email-validator to get the EmailStr type and later validation
-    display_name: str | None = Field(
-        default=None, title="The display name chosen by the user", 
-        max_length=50,
-        examples=["Elrich of the Emerald Enclave"]
-    )
-
-# TODO: review fastapi docs that this is a sensible pattern when more time
-class UserInput(User):
-    """ Extends User with input specific schema. """
-    password: str
-
-
-@user.get("/health")
+@user.get("/health", tags=["Users"])
 def check_health() -> str:
     return "ok"
 
-@user.get("/token")
-async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]):
-    # get username from form_data => form_data.username
-    # if not user dict, raise 400
-    # get hashed password
-    # if not password raise 400
-    # return access token (username) and token type (string bearer) 
-    pass
-
+# TODO: figure out if you want to protect this with client/secret or not. Would rather not have open api 
+## NOTE: this is a decision/iteration out of scope of MVP
 @user.post("/",  response_model=User, response_description="The created user.",  tags=["Users"])
-def create_user(user: UserInput, token: Annotated[str, Depends(oauth2_scheme)],) -> Any: # TODO: def don't return the password
+def create_user(user: UserInput) -> Any: # TODO: def don't return the password
     """
     Create a User with all the information:
-    - **email**: each user must have an email to log in with.
+    - **username**: each user must have an email to log in with; their email is their username.
     - **display_name**: An optional name for the user to display in the UI.
     """
     # TODO: if user exists already, throw a 403
     return user
 
-@user.get("/{user_id}")
-def get_user(user_id: int, token: Annotated[str, Depends(oauth2_scheme)], tags=["Users"]):
+# NOTE: tutorial, remember that order MATTERS
+@user.get("/me", response_model=User, tags=["Users"])
+async def read_users_me(
+    current_user: Annotated[User, Depends(get_current_user)]
+):
+    return current_user
+
+@user.get("/{user_id}", tags=["Users"])
+def get_user(user_id: int, token: Annotated[str, Depends(oauth2_scheme)]):
     if not user_id: # expand to check db if there is none, this should never trigger rn
         raise HTTPException(status_code=404, detail="Item not found")
     return {"user_id": user_id}
