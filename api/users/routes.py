@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException
 
 from auth.oauth import oauth2_scheme
 from .auth import get_current_user
-from .models import Token, User, UserInput
+from users.schemas import UserCreate, UserSchema
 
 user = APIRouter(
     prefix="/users"
@@ -16,8 +16,8 @@ def check_health() -> str:
 
 # TODO: figure out if you want to protect this with client/secret or not. Would rather not have open api 
 ## NOTE: this is a decision/iteration out of scope of MVP
-@user.post("/",  response_model=User, response_description="The created user.",  tags=["Users"])
-def create_user(user: UserInput) -> Any: # TODO: def don't return the password
+@user.post("/",  response_model=UserSchema, response_description="The created user.",  tags=["Users"])
+def create_user(user: UserCreate): # TODO: def don't return the password
     """
     Create a User with all the information:
     - **username**: each user must have an email to log in with; their email is their username.
@@ -27,9 +27,9 @@ def create_user(user: UserInput) -> Any: # TODO: def don't return the password
     return user
 
 # NOTE: tutorial, remember that order MATTERS
-@user.get("/me", response_model=User, tags=["Users"])
+@user.get("/me", response_model=UserSchema, tags=["Users"])
 async def read_users_me(
-    current_user: Annotated[User, Depends(get_current_user)]
+    current_user: Annotated[UserSchema, Depends(get_current_user)]
 ):
     return current_user
 

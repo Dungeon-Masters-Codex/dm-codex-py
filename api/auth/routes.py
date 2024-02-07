@@ -1,13 +1,12 @@
 from fastapi.security import OAuth2PasswordBearer
 from datetime import timedelta
-from typing import Any, Annotated
+from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 
-from auth.oauth import oauth2_scheme
-from users.auth import authenticate_user, ACCESS_TOKEN_EXPIRE_MINUTES, create_access_token, fake_users_db, get_current_user
-from users.models import Token
+from users.auth import authenticate_user, ACCESS_TOKEN_EXPIRE_MINUTES, create_access_token
+from .schemas import Token
 
 from constants.api import API_PREFIX, AUTH_PREFIX
 
@@ -19,7 +18,7 @@ auth = APIRouter(
 
 @auth.post("/token", tags=["Auth"])
 async def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]):
-    user = authenticate_user(fake_users_db, form_data.username, form_data.password)
+    user = authenticate_user(db, form_data.username, form_data.password)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

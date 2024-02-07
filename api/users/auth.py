@@ -5,18 +5,11 @@ from fastapi import Depends, HTTPException, status
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 
-from .models import TokenData, UserInDB, User
+from .crud import get_user_by_username
+from .models import User
 from auth.oauth import oauth2_scheme
+from auth.schemas import TokenData
 
-fake_users_db = {
-    "johndoe": {
-        "username": "johndoe",
-        "full_name": "John Doe",
-        "email": "johndoe@example.com",
-        "hashed_password": "$2b$12$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW",
-        "disabled": False,
-    }
-}
 
 # TODO: env var me 
 SECRET_KEY = "victoria"
@@ -31,14 +24,9 @@ def verify_password(plain_password, hashed_password):
 def get_password_hash(password):
     return pwd_context.hash(password)
 
-def get_user(db, username: str):
-    if username in db: 
-        user_dict = db[username]
-        return UserInDB(**user_dict)
-
 # TODO: update to real db connection, will do sqlite for local, so after basic auth flow is added, connect it (SQL section in fast api docs)
-def authenticate_user(fake_db, username: str, password: str):
-    user = get_user(fake_db, username)
+def authenticate_user(db, username: str, password: str):
+    user = get_user_by_username(db, username)
     if not user: 
         return False
     if not verify_password(password, user.hashed_password):
@@ -70,7 +58,7 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
         token_data = TokenData(username=username)
     except JWTError:
         raise credentials_exception
-    user = get_user(fake_users_db, username=token_data.username)
+    user = get_user_by_username(db, username=token_data.username)
     if user is None:
         raise credentials_exception
     return user
