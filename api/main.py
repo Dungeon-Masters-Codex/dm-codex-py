@@ -1,20 +1,11 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from db.database import SessionLocal
 from auth.routes import auth
 from users.routes import user
 from constants.api import API_PREFIX
 
 app = FastAPI()
-
-# Dependency
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
 
 app.include_router(auth, prefix=API_PREFIX)
 app.include_router(user, prefix=API_PREFIX)

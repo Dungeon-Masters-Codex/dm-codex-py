@@ -7,7 +7,8 @@ from .auth import get_current_user
 from users.schemas import UserCreate, UserSchema
 
 user = APIRouter(
-    prefix="/users"
+    prefix="/users",
+    
 )
 
 @user.get("/health", tags=["Users"])
